@@ -60,12 +60,14 @@ internal class _NSCFString : NSMutableString {
 internal final class _NSCFConstantString : _NSCFString {
     internal var _ptr : UnsafePointer<UInt8> {
         let offset = sizeof(OpaquePointer.self) + sizeof(Int32.self) + sizeof(Int32.self) + sizeof(_CFInfo.self)
-        let ptr = Unmanaged.passUnretained(self).toOpaque()
+        //!!!let ptr = Unmanaged.passUnretained(self).toOpaque()
+        let ptr = unsafeAddress(of: self)
         return ptr.load(fromByteOffset: offset, as: UnsafePointer<UInt8>.self)
     }
     internal var _length : UInt32 {
         let offset = sizeof(OpaquePointer.self) + sizeof(Int32.self) + sizeof(Int32.self) + sizeof(_CFInfo.self) + sizeof(UnsafePointer<UInt8>.self)
-        let ptr = Unmanaged.passUnretained(self).toOpaque()
+        //!!!let ptr = Unmanaged.passUnretained(self).toOpaque()
+        let ptr = unsafeAddress(of: self)
         return ptr.load(fromByteOffset: offset, as: UInt32.self)
     }
     

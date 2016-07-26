@@ -331,13 +331,15 @@ extension NSObject {
     }
 
     func withRetainedReference<T, R>(_ work: @noescape (UnsafePointer<T>) -> R) -> R {
-        let selfPtr = Unmanaged.passRetained(self).toOpaque().assumingMemoryBound(to: T.self)
-        return work(selfPtr)
+        //!!!let selfPtr = Unmanaged.passRetained(self).toOpaque().assumingMemoryBound(to: T.self)
+        //return work(selfPtr)
+        return work(_CFSwiftRetain(unsafeBitCast(self, to: UnsafeMutablePointer<Void>.self))!.assumingMemoryBound(to: T.self))
     }
     
     func withRetainedReference<T, R>(_ work: @noescape (UnsafeMutablePointer<T>) -> R) -> R {
-        let selfPtr = Unmanaged.passRetained(self).toOpaque().assumingMemoryBound(to: T.self)
-        return work(selfPtr)
+        //!!!let selfPtr = Unmanaged.passRetained(self).toOpaque().assumingMemoryBound(to: T.self)
+        //return work(selfPtr)
+        return work(_CFSwiftRetain(unsafeBitCast(self, to: UnsafeMutablePointer<Void>.self))!.assumingMemoryBound(to: T.self))
     }
     
     func withUnretainedReference<T, R>(_ work: @noescape (UnsafePointer<T>) -> R) -> R {

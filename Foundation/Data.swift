@@ -280,7 +280,8 @@ public struct Data : ReferenceConvertible, CustomStringConvertible, Equatable, H
     }
 
     public init?(count: Int) {
-        if let memory = malloc(count)?.bindMemory(to: UInt8.self, capacity: count) {
+        //!!!if let memory = malloc(count)?.bindMemory(to: UInt8.self, capacity: count) {
+        if let memory = malloc(count)?.assumingMemoryBound(to: UInt8.self) {
             self.init(bytesNoCopy: memory, count: count, deallocator: .free)
         } else {
             return nil
@@ -315,7 +316,8 @@ public struct Data : ReferenceConvertible, CustomStringConvertible, Equatable, H
     public func withUnsafeBytes<ResultType, ContentType>(_ body: @noescape (UnsafePointer<ContentType>) throws -> ResultType) rethrows -> ResultType {
         let bytes =  _getUnsafeBytesPointer()
         defer { _fixLifetime(self)}
-        let contentPtr = bytes.bindMemory(to: ContentType.self, capacity: count / strideof(ContentType.self))
+        //!!!let contentPtr = bytes.bindMemory(to: ContentType.self, capacity: count / strideof(ContentType.self))
+        let contentPtr = bytes.assumingMemoryBound(to: ContentType.self)
         return try body(contentPtr)
     }
     
@@ -332,7 +334,8 @@ public struct Data : ReferenceConvertible, CustomStringConvertible, Equatable, H
     public mutating func withUnsafeMutableBytes<ResultType, ContentType>(_ body: @noescape (UnsafeMutablePointer<ContentType>) throws -> ResultType) rethrows -> ResultType {
         let mutableBytes = _getUnsafeMutableBytesPointer()
         defer { _fixLifetime(self)}
-        let contentPtr = mutableBytes.bindMemory(to: ContentType.self, capacity: count / strideof(ContentType.self))
+        //!!!let contentPtr = mutableBytes.bindMemory(to: ContentType.self, capacity: count / strideof(ContentType.self))
+        let contentPtr = mutableBytes.assumingMemoryBound(to: ContentType.self)
         return try body(contentPtr)
     }
     
