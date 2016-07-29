@@ -300,20 +300,21 @@ public class FileManager: NSObject {
             if entryName != "." && entryName != ".." {
                 contents.append(entryName)
                     
-                let entryType = withUnsafePointer(to: &entry!.pointee.d_type) { (ptr) -> Int32 in
+                if let entryType = withUnsafePointer(to: &entry!.pointee.d_type, { (ptr) -> Int32 in
                     return Int32(ptr.pointee)
-                }
-                #if os(OSX) || os(iOS)
-                    let tempEntryType = entryType
-                #elseif os(Linux)
-                    let tempEntryType = Int(entryType)
-                #endif
+                }) {
+                    #if os(OSX) || os(iOS)
+                        let tempEntryType = entryType
+                    #elseif os(Linux)
+                        let tempEntryType = Int(entryType)
+                    #endif
                         
-                if tempEntryType == DT_DIR {
-                    let subPath: String = path + "/" + entryName
+                    if tempEntryType == DT_DIR {
+                        let subPath: String = path + "/" + entryName
                             
-                    let entries =  try subpathsOfDirectory(atPath: subPath)
-                    contents.append(contentsOf: entries.map({file in "\(entryName)/\(file)"}))
+                        let entries =  try subpathsOfDirectory(atPath: subPath)
+                        contents.append(contentsOf: entries.map({file in "\(entryName)/\(file)"}))
+                    }
                 }
             }
             
